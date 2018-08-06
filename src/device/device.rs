@@ -6,6 +6,8 @@ use ffi::*;
 use {Result as Res, event};
 use event::{Kind, Code};
 
+use std::os::unix::io::{RawFd, AsRawFd};
+
 /// The virtual device.
 pub struct Device {
 	fd: c_int,
@@ -73,6 +75,12 @@ impl Device {
 	pub fn position<T: event::Position>(&mut self, event: &T, value: i32) -> Res<()> {
 		self.write(event.kind(), event.code(), value)
 	}
+}
+
+impl AsRawFd for Device {
+    fn as_raw_fd(&self) -> RawFd {
+        self.fd
+    }
 }
 
 impl Drop for Device {
